@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+h1 {
+    margin: 0;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+}
+
+#map {
+    flex: 1;
+}
+
+
+
