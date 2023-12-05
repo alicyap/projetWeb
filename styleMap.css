@@ -4,18 +4,103 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    font-family: Axiforma, sans-serif;
+    background-color: #f8f6f6;
 }
 
-h1 {
-    margin: 0;
-    padding: 10px;
-    background-color: #333;
-    color: white;
+.title {
+    margin-top: -5px;
+    font-family: Axiforma, sans-serif;
+    font-weight: bold;
+    font-size:32px;
+    padding: 20px;
+    color: black;
+    background-color: white;
     text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 20px 0px;
 }
 
-#map {
-    flex: 1;
+.interface{
+    height:100vh;
+    width:100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.outils{
+    height:150px;
+    width:1vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 50px 80px;
+}
+
+.filtre{
+    height:150px;
+    margin-right: 80px;
+    color: black;
+    background-color: white;
+    text-align: left;
+    padding:20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 20px 0px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.filtre p{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.select{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.ui-selectmenu-button {
+    border: 1px solid #000;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+    background-color: #C3C6D9FF;
+}
+
+.legendes{
+    height:150px;
+    color: black;
+    background-color: white;
+    text-align: left;
+    padding:20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 20px 0px;
+    border-radius: 10px;
+}
+
+.legendes p{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.contents{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#map{
+    height: 70vh;
+    width:100vw;
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-bottom: 50px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 20px 0px;
+    border-radius: 10px;
+
+
 }
 
 

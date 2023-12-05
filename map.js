@@ -1,16 +1,21 @@
-var mymap = L.map('map').setView([0.9,-3.0], 1.5); //carte européano-centrée (France)
+var mymap = L.map('map').setView([46.6031, 1.8883], 6); //carte européano-centrée (France)
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mymap);
+
+
+$( "#interet" ).selectmenu(
+    {width: 250,
+  icons: { button: "ui-icon-caret-1-s" }});
 
 /*L.marker([51.5, -0.09]).addTo(mymap)
     .bindPopup('A pretty CSS popup.<br> Easily customizable.')
     .openPopup(); créé des marqueurs*/
 
 // Fonction pour créer un marqueur avec une requête AJAX
-function marquer() {
-  $.getJSON('zones-touristiques-internationales.json', function (data) {
+/*function marquer() {
+  $.getJSON('horaires-des-gares.json', function (data) {
     // Affiche les données dans la console
     console.log(data);
 
@@ -28,5 +33,5 @@ function marquer() {
 
 $(document).ready(function() {
   marquer();
-});
+});*/
 
