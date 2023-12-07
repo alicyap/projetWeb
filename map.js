@@ -1,8 +1,8 @@
 var mymap = L.map('map').setView([46.6031, 1.8883], 6);
 
-var tabname = new Set();
+/*var tabname = new Set();
 var tabCodeUIC = new Set();
-var latLongGare = [];
+var latLongGare = [];*/
 
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -15,7 +15,7 @@ $( "#interet" ).selectmenu(
   icons: { button: "ui-icon-caret-1-s" }});
 
 //récupère dans le json les noms des villes dans lesquelles sont nos gares
-fetch('referentiel-gares-voyageurs.json')
+/*fetch('referentiel-gares-voyageurs.json')
     .then(response => response.json())
     .then(data => {
 
@@ -46,12 +46,55 @@ function createMarkeur(tab) {
         const latitude = coordonnees.lat;
         const longitude = coordonnees.lon;
         L.marker([latitude, longitude]).addTo(mymap)
-            .bindPopup('CC')
+            .bindPopup('')
             .openPopup();
     });
+}*/
+
+function marquer() {
+    fetch('referentiel-gares-voyageurs.json')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(gare => {
+                if(gare.wgs_84 &&
+                    typeof gare.wgs_84.lat === 'number' &&
+                    typeof gare.wgs_84.lon === 'number' &&
+                    gare.dtfinval === null) {
+                    var latit = gare.wgs_84.lat;
+                    var longit = gare.wgs_84.lon;
+
+                    L.marker([latit, longit]).addTo(mymap).bindPopup(gare.alias_libelle_noncontraint);// Ajoutez un marqueur avec une info-bulle
+                } else {
+                    //geocodeGare(gare)
+                    console.log('Gare non ajoutée à la carte ou autres actions à effectuer :', gare);
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching JSON:', error));
 }
 
+/*function geocodeGare(gare) { DANS LE CAS OU ON VOUDRAIT LES RECHERCHER
+    $.ajax({
+        type: 'GET',
+        url: 'https://nominatim.openstreetmap.org/search?q=' + gare.alias_libelle_noncontraint + '&format=json',
+        success: function (result) {
+            if (result.length > 0) {
+                var latit = result[0].lat;
+                var longit = result[0].lon;
+                L.marker([latit, longit]).addTo(mymap).bindPopup(gare.alias_libelle_noncontraint);
+            } else {
+                console.error('Nominatim did not return coordinates for', gare.alias_libelle_noncontraint);
+            }
+        },
+        error: function (error) {
+            console.error('Error geocoding with Nominatim:', error);
+        }
+    });
+}*/
 
+$(document).ready(function() {
+    marquer();
+});
 
 /*document.addEventListener("DOMContentLoaded", function() {
 
