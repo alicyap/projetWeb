@@ -85,7 +85,19 @@
           <li><a href="#tabs-2">Horaires</a></li>
         </ul>
         <div id="tabs-1">
-          <p>A remplir avec deux champs d'input</p>
+          <p>Vérifiez qu'un trajet <strong><u>direct</u></strong> est possible entre deux gares ! </p>
+            <div class="itineraire">
+                <div class="depart">
+                <label for="depart">Gare de départ: </label>
+                <input id="depart">
+                </div>
+                <div class="arrivee">
+                <label for="arrivee">Gare d'arrivée: </label>
+                <input id="arrivee">
+                </div>
+                <div class="button">
+                <button id="itineraire">Rechercher</button>
+                </div>
         </div>
         <div id="tabs-2">
           <p>A remplir avec les horaires par jour, mais idéalement n'apparaitra que lorsque l'utilisateur apuuie sur une seule gare en particulier</p>
@@ -93,6 +105,7 @@
       </div>
     </div>
   </div>
+</div>
 
 
   <script src="map.js"></script>

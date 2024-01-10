@@ -1,9 +1,10 @@
 var mymap = L.map('map').setView([46.6031, 1.8883], 6);
 
 var tabname = []
-var tabCodeUIC = new Set();
+var tabCodeUIC = [];
 var latLongGare = [];
 let tabCodeInteret = [];
+let tabCodeLigneParGare = [];
 
 var markers = L.markerClusterGroup();
 
@@ -93,9 +94,7 @@ $( function() {
         source: availableTags
     });
 });
-$( function() {
-    $( "#tabs" ).tabs();
-} );
+
 
 
 fetch('referentiel-gares-voyageurs.json')
@@ -109,7 +108,7 @@ fetch('referentiel-gares-voyageurs.json')
                 gare.dtfinval === null) {
 
                 tabname.push(gare.alias_libelle_noncontraint);
-                tabCodeUIC.add(gare.uic_code);
+                tabCodeUIC.push(parseInt(gare.uic_code, 10).toString()); //pour enlever les 0 devant
                 latLongGare.push(gare.wgs_84);
                 tabCodeInteret.push(gare.segmentdrg_libelle);
 
@@ -122,6 +121,8 @@ fetch('referentiel-gares-voyageurs.json')
     }).catch(error => {
     console.error('Erreur lors de la récupération du fichier JSON:');
     });
+
+
 
 mymap.addLayer(markers);
 markers.options.iconCreateFunction = function(cluster) {
@@ -355,6 +356,86 @@ $( "#tags" ).on( "autocompletechange", function( event, ui ) {
 } );
 
 
+$( function() {
+    $( "#tabs" ).tabs();
+} );
+
+$( function() {
+    $("#depart").autocomplete({
+        source: tabname
+    });
+    $("#arrivee").autocomplete({
+        source: tabname
+    });
+});
 
 
+fetch('liste-des-gares.json')
+    .then(response => response.json())
+    .then(data => {
+        let codeLignesDeLaGare = [];
+        for (let element of tabCodeUIC) {
+            codeLignesDeLaGare = [];
+            for (let gare of data) {
+                if (element === gare.code_uic) {
+                    codeLignesDeLaGare.push(gare.code_ligne);
+                }
+            }
+            tabCodeLigneParGare.push(codeLignesDeLaGare);
+        }
+    });
+console.log(tabCodeLigneParGare);
+
+
+
+$( "#itineraire" ).click(function() {
+    console.log( "Handler for .click() called." );
+    let depart = $("#depart").val();
+    let arrivee = $("#arrivee").val();
+    let codeLigneD = tabCodeLigneParGare[tabname.indexOf(depart)];
+    let codeLigneA = tabCodeLigneParGare[tabname.indexOf(arrivee)];
+    console.log(codeLigneD);
+    console.log(codeLigneA);
+    let codeLigneCommune;
+    codeLigneD.forEach(element => {
+        codeLigneA.forEach(element2 => {
+            if (element === element2) {
+                codeLigneCommune = element;
+            }
+        });
+    });
+    console.log(codeLigneCommune);
+    if (codeLigneCommune !== undefined) {
+        fetch("lignes-par-type.json")
+            .then(response => response.json())
+            .then(data => {
+                for (let gare of data) {
+                    if (codeLigneCommune === gare.code_ligne) {
+                        mymap.eachLayer(function (layer) {
+                            if (layer instanceof L.Polyline) {
+                                mymap.removeLayer(layer);
+                            }
+                        });
+                        for (var i = 0; i < gare.geo_shape.geometry.coordinates.length; i++) {
+                            var temp = gare.geo_shape.geometry.coordinates[i][0];
+                            gare.geo_shape.geometry.coordinates[i][0] = gare.geo_shape.geometry.coordinates[i][1];
+                            gare.geo_shape.geometry.coordinates[i][1] = temp;
+                        }
+
+                        var polyline = L.polyline(gare.geo_shape.geometry.coordinates, {color: 'red'}).addTo(mymap);
+                        markers.clearLayers();
+                        markers.addLayer(L.marker([latLongGare[tabname.indexOf(depart)].lat, latLongGare[tabname.indexOf(depart)].lon]).bindPopup(depart));
+                        markers.addLayer(L.marker([latLongGare[tabname.indexOf(arrivee)].lat, latLongGare[tabname.indexOf(arrivee)].lon]).bindPopup(arrivee));
+                        mymap.addLayer(markers);
+
+                        var bounds = L.latLngBounds([[latLongGare[tabname.indexOf(depart)].lat, latLongGare[tabname.indexOf(depart)].lon]], [[latLongGare[tabname.indexOf(arrivee)].lat, latLongGare[tabname.indexOf(arrivee)].lon]]);
+                        mymap.fitBounds(bounds);
+                    }
+                }
+            });
+    }
+
+
+
+})
 
