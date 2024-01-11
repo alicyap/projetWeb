@@ -1,10 +1,9 @@
-var mymap = L.map('map').setView([46.6031, 1.8883], 5.5);
+var mymap = L.map('map').setView([46.6031, 1.8883], 6);
 
 var tabname = []
-var tabCodeUIC = [];
+var tabCodeUIC = new Set();
 var latLongGare = [];
 let tabCodeInteret = [];
-let tabCodeLigneParGare = [];
 
 var markers = L.markerClusterGroup();
 
@@ -88,39 +87,6 @@ $( function() {
         "Orne",
         "Pas-de-Calais",
         "Puy-de-Dôme",
-        "Pyrénées-Atlantiques",
-        "Hautes-Pyrénées",
-        "Pyrénées-Orientales",
-        "Bas-Rhin",
-        "Haut-Rhin",
-        "Rhône",
-        "Haute-Saône",
-        "Saône-et-Loire",
-        "Sarthe",
-        "Savoie",
-        "Haute-Savoie",
-        "Paris",
-        "Seine-Maritime",
-        "Seine-et-Marne",
-        "Yvelines",
-        "Deux-Sèvres",
-        "Somme",
-        "Tarn",
-        "Tarn-et-Garonne",
-        "Var",
-        "Vaucluse",
-        "Vendée",
-        "Vienne",
-        "Haute-Vienne",
-        "Vosges",
-        "Yonne",
-        "Territoire de Belfort",
-        "Essonne",
-        "Hauts-de-Seine",
-        "Seine-Saint-Denis",
-        "Val-de-Marne",
-        "Val-d'Oise",
-
 
     ];
     $("#tags").autocomplete({
@@ -128,7 +94,10 @@ $( function() {
     });
 });
 
-
+/*
+$( function() {
+    $( "#tabs" ).tabs();
+} );
 
 Promise.all([
     fetch('horaires-des-gares.json').then(response => response.json()),
@@ -161,7 +130,7 @@ function createMarkersWithHoraires(horairesData, data) {
             }));
 
             tabname.push(gare.alias_libelle_noncontraint);
-            tabCodeUIC.push(parseInt(gare.uic_code, 10).toString()); // pour enlever les 0 devant
+            tabCodeUIC.add(parseInt(gare.uic_code, 10).toString()); // pour enlever les 0 devant
             latLongGare.push(gare.wgs_84);
             tabCodeInteret.push(gare.segmentdrg_libelle);
 
@@ -181,7 +150,7 @@ function createMarkersWithHoraires(horairesData, data) {
                         if (joursNormaux.length > 0) {
                             horairesTab.append('<h4>Jours Normaux</h4><ul>' + joursNormaux.join('') + '</ul>');
                         } else {
-                            horairesTab.append('<p>Désolé ! il semblerait qu\'on n\'ait pas d\'informations sur les horaires de la semaine.</p>');
+                            horairesTab.append('<p>Désolé, il semblerait qu\'on n\'ait pas d\'informations sur les horaires normaux.</p>');
                         }
 
                         const joursFeries = gare.horaires
@@ -191,7 +160,7 @@ function createMarkersWithHoraires(horairesData, data) {
                         if (joursFeries.length > 0) {
                             horairesTab.append('<h4>Jours Fériés</h4><ul>' + joursFeries.join('') + '</ul>');
                         } else {
-                            horairesTab.append('<p>Désolé ! il semblerait qu\'on n\'ait pas d\'informations sur les horaires de jours fériés.</p>');
+                            horairesTab.append('<p>Désolé, il semblerait qu\'on n\'ait pas d\'informations sur les horaires fériés.</p>');
                         }
 
                     })
@@ -199,6 +168,8 @@ function createMarkersWithHoraires(horairesData, data) {
         }
     });
 }
+*/
+
 
 mymap.addLayer(markers);
 markers.options.iconCreateFunction = function(cluster) {
@@ -428,100 +399,26 @@ $( "#tags" ).on( "autocompletechange", function( event, ui ) {
 
     const coordinates = departementsCoordonnees[selectedDepartement];
     mymap.setView(coordinates, 8.5);
+})
 
-} );
+marker.on('click', function () {
+    // Charger dynamiquement les horaires de la gare à partir du JSON
+    var gareId = "ID_DE_LA_GARE";
+    var horaires = chargerHorairesDepuisJSON(gareId);
 
+    // Mettre à jour le contenu de l'onglet des horaires
+    document.getElementById('horaires-container').innerHTML = "<b>Nom de la gare</b><br>Horaires : " + horaires;
 
-$( function() {
-    $( "#tabs" ).tabs();
-} );
-
-
-
-
-
-
-
-$( function() {
-    $("#depart").autocomplete({
-        source: tabname
-    });
-    $("#arrivee").autocomplete({
-        source: tabname
-    });
+    // Afficher la popup avec les informations des horaires
+    this.bindPopup("<b>Nom de la gare</b><br>Horaires : " + horaires).openPopup();
 });
 
 
-fetch('liste-des-gares.json')
-    .then(response => response.json())
-    .then(data => {
-        let codeLignesDeLaGare = [];
-        for (let element of tabCodeUIC) {
-            codeLignesDeLaGare = [];
-            for (let gare of data) {
-                if (element === gare.code_uic) {
-                    codeLignesDeLaGare.push(gare.code_ligne);
-                }
-            }
-            tabCodeLigneParGare.push(codeLignesDeLaGare);
-        }
-    });
-console.log(tabCodeLigneParGare);
 
 
 
-$( "#rechercheB" ).click(function() {
-    console.log( "Handler for .click() called." );
-    let depart = $("#depart").val();
-    let arrivee = $("#arrivee").val();
-    let codeLigneD = tabCodeLigneParGare[tabname.indexOf(depart)];
-    let codeLigneA = tabCodeLigneParGare[tabname.indexOf(arrivee)];
-    console.log(codeLigneD);
-    console.log(codeLigneA);
-    let codeLigneCommune;
-    codeLigneD.forEach(element => {
-        codeLigneA.forEach(element2 => {
-            if (element === element2) {
-                codeLigneCommune = element;
-            }
-        });
-    });
-    console.log(codeLigneCommune);
-    if (codeLigneCommune !== undefined) {
-        fetch("lignes-par-type.json")
-            .then(response => response.json())
-            .then(data => {
-                for (let gare of data) {
-                    if (codeLigneCommune === gare.code_ligne) {
-                        mymap.eachLayer(function (layer) {
-                            if (layer instanceof L.Polyline) {
-                                mymap.removeLayer(layer);
-                            }
-                        });
-                        for (var i = 0; i < gare.geo_shape.geometry.coordinates.length; i++) {
-                            var temp = gare.geo_shape.geometry.coordinates[i][0];
-                            gare.geo_shape.geometry.coordinates[i][0] = gare.geo_shape.geometry.coordinates[i][1];
-                            gare.geo_shape.geometry.coordinates[i][1] = temp;
-                        }
-
-                        var polyline = L.polyline(gare.geo_shape.geometry.coordinates, {color: 'red'}).addTo(mymap);
-                        markers.clearLayers();
-                        markers.addLayer(L.marker([latLongGare[tabname.indexOf(depart)].lat, latLongGare[tabname.indexOf(depart)].lon]).bindPopup(depart));
-                        markers.addLayer(L.marker([latLongGare[tabname.indexOf(arrivee)].lat, latLongGare[tabname.indexOf(arrivee)].lon]).bindPopup(arrivee));
-                        mymap.addLayer(markers);
-
-                        var bounds = L.latLngBounds([[latLongGare[tabname.indexOf(depart)].lat, latLongGare[tabname.indexOf(depart)].lon]], [[latLongGare[tabname.indexOf(arrivee)].lat, latLongGare[tabname.indexOf(arrivee)].lon]]);
-                        mymap.fitBounds(bounds);
-                    }
-                }
-            });
-    }
 
 
-    $( "#clear" ).click(function() {
-        location.reload();
 
-    });
 
-})
 
