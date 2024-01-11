@@ -31,18 +31,22 @@ $conn = null;  // Ferme la connexion PDO à la fin du script
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
+    <link rel="stylesheet" href="Css/pageCoIns.css">
 </head>
 <body>
     <h2>Connexion</h2>
-    <?php if (isset($erreur)) { echo "<p>$erreur</p>"; } ?>
-    <form method="post" action="connexion.php">
-        <label for="email">Email:</label>
-        <input type="text" name="email" required>
+    <div class="container">
+        <?php if (isset($erreur)) { echo "<p>$erreur</p>"; } ?>
+        <form method="post" action="connexion.php">
+            <label for="email">Email:</label>
+            <input type="text" name="email" required>
 
-        <label for="mdp">Mot de passe:</label>
-        <input type="password" name="mdp" required>
+            <label for="mdp">Mot de passe:</label>
+            <input type="password" name="mdp" required>
 
-        <input type="submit" value="Se connecter">
-    </form>
+            <input type="submit" value="Se connecter">
+        </form>
+    </div>
+
 </body>
 </html>

@@ -33,9 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Inscription</title>
+    <link rel="stylesheet" href="Css/pageCoIns.css">
 </head>
 <body>
-    <h2>Inscription</h2>
+    <h2>Inscription à GareConnect</h2>
     <form method="post" action="inscription.php">
         <label for="nom">Nom:</label>
         <input type="text" name="nom" required>
